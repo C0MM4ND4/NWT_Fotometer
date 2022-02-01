@@ -1,13 +1,13 @@
 #include <Arduino.h>
-int LEDgreen = 3;        // Grün Pin 3
+int LEDgreen = 3;       // Grün Pin 3
 int LEDred = 5;         // Rot Pin 5
-int LEDblue = 6;       // Blau Pin 6
+int LEDblue = 6;        // Blau Pin 6
 int t = 1000;           // Pause 1 sec.
 int brightness1a = 150; // Helligkeit Grün
 int brightness1b = 200; // Helligkeit Rot
-int brightness1c = 250; // Helligkeit Blau 
+int brightness1c = 250; // Helligkeit Blau
 int dark = 0;           // Helligkeit ganz unten
-int sensor;             
+int sensor;
 int rowCount = 500;
 int rowNumber = 0;
 
@@ -26,11 +26,17 @@ void loop()
 {
   if (Serial.available())
   {
+
+    int state = Serial.parseInt();
+    if (state != 1 && state != 2 && state != 3 && state != 4)
+    {
+      return;
+    }
     analogWrite(LEDgreen, dark);
     analogWrite(LEDred, dark);
     analogWrite(LEDblue, dark);
+    //Serial.println("Licht aus");
 
-    int state = Serial.parseInt();
     if (state == 1)
     {
       analogWrite(LEDgreen, brightness1a); // Grün on
@@ -38,18 +44,22 @@ void loop()
       Serial.println("Grün an!");
     }
 
-    if (state == 2)
+    else if (state == 2)
     {
       analogWrite(LEDred, brightness1b); // Rot on
       delay(t);
       Serial.println("Rot an!");
     }
 
-    if (state == 3)
+    else if (state == 3)
     {
       analogWrite(LEDblue, brightness1c); // Blau on
       delay(t);
-      Serial.println("Grün an!");
+      Serial.println("Blau an!");
+    }
+    else if (state == 4)
+    {
+     Serial.println("Licht aus");
     }
     sensor = analogRead(0);
     // Serial.println(sensor);
@@ -58,8 +68,9 @@ void loop()
     {
       Serial.print(++rowNumber);
       Serial.print('\t');
-      Serial.println(sensor); //Sensorwert Ausgabe
+      Serial.println(sensor); // Sensorwert Ausgabe
     }
+
     delay(100);
   }
 }
